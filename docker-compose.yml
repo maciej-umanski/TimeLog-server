@@ -1,0 +1,8 @@
+version: "1"
+services:
+  TimeLog-server:
+    build: .
+    image: "timelog-server:develop-0.0.1"
+    container_name: "TimeLog-server"
+    ports:
+      - "8818:8818"
