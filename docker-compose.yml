@@ -1,8 +1,21 @@
-version: "1"
+version: "3.3"
 services:
-  TimeLog-server:
-    build: .
-    image: "timelog-server:develop-0.0.1"
-    container_name: "TimeLog-server"
+  postgresql:
+    container_name: postgres
+    image: postgres:latest
+    build:
+      context: ./database
+      dockerfile: Dockerfile
+    env_file:
+      - ./database/database.env
     ports:
-      - "8818:8818"
+      - "5432:5432"
+
+  #TimeLog-server:
+  #  depends_on:
+  #    - postgresql
+  #  build: .
+  #  image: "timelog-server:develop-0.0.2"
+  #  container_name: "TimeLog-server"
+  #  ports:
+  #    - "8818:8818"

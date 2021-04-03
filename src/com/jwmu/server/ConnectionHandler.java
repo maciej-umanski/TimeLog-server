@@ -38,7 +38,7 @@ public class ConnectionHandler extends Thread{
 
     private void initializeDatabase(){
         databaseHandler = new DatabaseHandler();
-        isDatabaseConnected = true; // sprawdzanie połączenia z bazą
+        isDatabaseConnected = true;
     }
 
     private void handleNewConnections() throws IOException {

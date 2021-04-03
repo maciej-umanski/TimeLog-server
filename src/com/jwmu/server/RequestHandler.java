@@ -1,11 +1,8 @@
 package com.jwmu.server;
-import com.jwmu.common.CodesInterface;
-import com.jwmu.common.Task;
-import com.jwmu.testMisc.TaskHandler;
 
+import com.jwmu.common.CodesInterface;
 import java.io.IOException;
 import java.sql.SQLException;
-import java.util.Date;
 
 public class RequestHandler {
     private final ClientHandler clientHandler;
@@ -51,14 +48,5 @@ public class RequestHandler {
 
     public void wrongCommand() throws IOException {
         responseSender.sendCode(CodesInterface.WRONG_COMMAND);
-    }
-
-    public void sendExampleTask() throws IOException {
-        if(clientHandler.isLoggedIn()){
-            Task newTask = new TaskHandler().createTask("0","tytuł", "notatka", new Date(), new Date());
-            responseSender.sendObject(newTask);
-        }else{
-            responseSender.sendCode(CodesInterface.CLIENT_NOT_LOGGED);
-        }
     }
 }

@@ -3,21 +3,23 @@ package com.jwmu.server;
 import java.sql.*;
 
 public class DatabaseHandler {
-    private Connection connection = null;
+    private Connection connection;
 
     public DatabaseHandler(){
-        try{
+        try {
             Class.forName("org.postgresql.Driver");
-            this.connection = DriverManager.getConnection("jdbc:postgresql://balarama.db.elephantsql.com:5432/mwcnzcvg", "mwcnzcvg", "RW7RXxmv416OWBAKigB_AsdpN4kgOBPH");
+            this.connection = DriverManager.getConnection("jdbc:postgresql://localhost:5432/timelog", "admin", "admin");
             this.connection.setAutoCommit(false);
+            System.out.println("Successfully connected to database");
         } catch (ClassNotFoundException | SQLException e) {
             e.printStackTrace();
+            System.out.print('e');
         }
     }
 
     public boolean authenticateUser(String username, String password) throws SQLException {
         Statement statement = this.connection.createStatement();
-        String str = "SELECT * FROM USERS WHERE USERNAME = '" + username + "' AND pass = '" + password + "';";
+        String str = "SELECT * FROM USERS WHERE USERNAME = '" + username + "' AND PASSWORD = '" + password + "';";
         ResultSet resultSet = statement.executeQuery(str);
         if(!resultSet.isBeforeFirst()){
             statement.close();

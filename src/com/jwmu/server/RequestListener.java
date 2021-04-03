@@ -32,8 +32,6 @@ public class RequestListener extends Thread{
                 requestHandler.logoffUser();
             }else if("connection".equalsIgnoreCase(tokens[0])){
                 requestHandler.connectionNotification();
-            }else if("task".equalsIgnoreCase(tokens[0])){
-                requestHandler.sendExampleTask();
             }else{
                 requestHandler.wrongCommand();
             }
