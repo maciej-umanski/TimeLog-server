@@ -29,10 +29,6 @@ public class ServerLogger {
         System.err.println(getDate() + "Failed to connect to database");
     }
 
-    public void databaseReconnection(){
-        System.err.println(getDate() + "Database disconnected, trying to reconnect");
-    }
-
     public void databaseConnectionRetry(int count) {
         System.err.println(getDate() + count + " Trying to resolve connection to database, retry in 3 seconds");
     }

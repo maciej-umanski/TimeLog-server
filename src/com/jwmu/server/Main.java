@@ -2,7 +2,7 @@ package com.jwmu.server;
 
 import com.jwmu.configuration.Configuration;
 
-public class ServerMain {
+public class Main {
     public static void main(String[] args) {
 
         String activeProfile = " ";

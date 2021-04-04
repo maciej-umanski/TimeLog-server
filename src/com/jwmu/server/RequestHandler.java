@@ -1,6 +1,8 @@
 package com.jwmu.server;
 
 import com.jwmu.common.CodesInterface;
+import com.jwmu.common.Task;
+
 import java.io.IOException;
 import java.sql.SQLException;
 
@@ -18,7 +20,7 @@ public class RequestHandler {
     }
 
     public void connectionNotification() throws IOException {
-        responseSender.sendCode(CodesInterface.CLIENT_CONNECTED);
+        responseSender.send(CodesInterface.CLIENT_CONNECTED);
     }
 
     public void LoginUser(String[] tokens) throws IOException, SQLException {
@@ -28,34 +30,34 @@ public class RequestHandler {
                     boolean isAuthenticated = databaseHandler.authenticateUser(tokens[1], tokens[2]);
                     if (isAuthenticated) {
                         clientHandler.logIn(databaseHandler.getUserId(tokens[1]));
-                        responseSender.sendCode(CodesInterface.SUCCESSFUL_LOGIN);
+                        responseSender.send(CodesInterface.SUCCESSFUL_LOGIN);
                         logger.userLoggedIn(clientHandler.getUserId());
                     } else {
-                        responseSender.sendCode(CodesInterface.WRONG_CREDENTIALS);
+                        responseSender.send(CodesInterface.WRONG_CREDENTIALS);
                     }
                 } else {
-                    responseSender.sendCode(CodesInterface.WRONG_CREDENTIALS);
+                    responseSender.send(CodesInterface.WRONG_CREDENTIALS);
                 }
             }else{
-                responseSender.sendCode(CodesInterface.DATABASE_DISCONNECTED);
+                responseSender.send(CodesInterface.DATABASE_DISCONNECTED);
             }
         }else{
-            responseSender.sendCode(CodesInterface.CLIENT_IS_LOGGED);
+            responseSender.send(CodesInterface.CLIENT_IS_LOGGED);
         }
     }
 
     public void logoffUser() throws IOException {
         if(!clientHandler.isLoggedIn()){
-            responseSender.sendCode(CodesInterface.CLIENT_NOT_LOGGED);
+            responseSender.send(CodesInterface.CLIENT_NOT_LOGGED);
         }else{
             clientHandler.logOff();
-            responseSender.sendCode(CodesInterface.SUCCESSFUL_LOGOFF);
+            responseSender.send(CodesInterface.SUCCESSFUL_LOGOFF);
             logger.userLoggedOff(clientHandler.getUserId());
         }
     }
 
     public void wrongCommand() throws IOException {
-        responseSender.sendCode(CodesInterface.WRONG_COMMAND);
+        responseSender.send(CodesInterface.WRONG_COMMAND);
     }
 
     public void databaseNotification() throws IOException {
@@ -65,6 +67,11 @@ public class RequestHandler {
         else
             codeToSend = CodesInterface.DATABASE_DISCONNECTED;
 
-        responseSender.sendCode(codeToSend);
+        responseSender.send(codeToSend);
+    }
+
+    public void sendTask() throws IOException {
+        Task taskToSend = new Task(0,"test");
+        responseSender.send(taskToSend);
     }
 }
