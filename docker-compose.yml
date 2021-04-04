@@ -1,6 +1,6 @@
 version: "3.3"
 services:
-  postgresql:
+  postgres:
     container_name: postgres
     image: postgres:latest
     build:
@@ -10,12 +10,11 @@ services:
       - ./database/database.env
     ports:
       - "5432:5432"
-
-  #TimeLog-server:
-  #  depends_on:
-  #    - postgresql
-  #  build: .
-  #  image: "timelog-server:develop-0.0.2"
-  #  container_name: "TimeLog-server"
-  #  ports:
-  #    - "8818:8818"
+  TimeLog-server:
+    depends_on:
+      - postgres
+    build: .
+    image: "timelog-server:develop-0.0.1"
+    container_name: "TimeLog-server"
+    ports:
+      - "8818:8818"

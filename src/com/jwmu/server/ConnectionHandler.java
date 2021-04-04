@@ -7,13 +7,22 @@ import java.util.ArrayList;
 
 public class ConnectionHandler extends Thread{
 
+    private final String databaseUrl;
+    private final String databaseUser;
+    private final String databasePassword;
     private final int serverPort;
+    private final ServerLogger logger;
+
     private ServerSocket serverSocket;
     protected DatabaseHandler databaseHandler;
     private boolean isServerActive = false;
     private boolean isDatabaseConnected = false;
 
-    public ConnectionHandler(int serverPort) {
+    public ConnectionHandler(String databaseUrl, String databaseUser, String databasePassword, int serverPort, ServerLogger logger) {
+        this.logger = logger;
+        this.databaseUrl = databaseUrl;
+        this.databaseUser = databaseUser;
+        this.databasePassword = databasePassword;
         this.serverPort = serverPort;
         this.start();
     }
@@ -37,12 +46,13 @@ public class ConnectionHandler extends Thread{
     }
 
     private void initializeDatabase(){
-        databaseHandler = new DatabaseHandler();
-        isDatabaseConnected = true;
+        databaseHandler = new DatabaseHandler(databaseUrl, databaseUser, databasePassword, logger);
+        isDatabaseConnected = databaseHandler.isConnected();
     }
 
     private void handleNewConnections() throws IOException {
-        new ClientHandler(serverSocket.accept(), databaseHandler);
+        new ClientHandler(serverSocket.accept(), databaseHandler, logger);
     }
+
 
 }

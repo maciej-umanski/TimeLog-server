@@ -4,6 +4,7 @@ import java.net.Socket;
 
 public class ClientHandler extends Thread {
 
+    private int userId;
     private boolean isLoggedIn = false;
 
     private final InputStream inputStream;
@@ -11,7 +12,10 @@ public class ClientHandler extends Thread {
     private ResponseSender responseSender;
     private final DatabaseHandler databaseHandler;
 
-    public ClientHandler(Socket newClientConnection, DatabaseHandler databaseHandler) throws IOException {
+    private final ServerLogger logger;
+
+    public ClientHandler(Socket newClientConnection, DatabaseHandler databaseHandler, ServerLogger logger) throws IOException {
+        this.logger = logger;
         this.inputStream = new DataInputStream(newClientConnection.getInputStream());
         this.outputStream = new DataOutputStream(newClientConnection.getOutputStream());
         this.databaseHandler = databaseHandler;
@@ -33,7 +37,8 @@ public class ClientHandler extends Thread {
         return isLoggedIn;
     }
 
-    protected void logIn(String Id){
+    protected void logIn(int userId){
+        this.userId = userId;
         this.isLoggedIn = true;
     }
 
@@ -47,5 +52,13 @@ public class ClientHandler extends Thread {
 
     public DatabaseHandler getDatabaseHandler() {
         return databaseHandler;
+    }
+
+    public int getUserId() {
+        return userId;
+    }
+
+    public ServerLogger getLogger(){
+        return logger;
     }
 }

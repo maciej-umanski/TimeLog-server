@@ -6,7 +6,7 @@ public interface CodesInterface {
     String CLIENT_NOT_LOGGED = "-2";
     String CLIENT_IS_LOGGED = "-3";
     String WRONG_COMMAND = "-4";
-    String CLIENT_DISCONNECTED = "-5";
+    String DATABASE_DISCONNECTED = "-5";
 
     //good codes
     String CLIENT_CONNECTED = "0";
