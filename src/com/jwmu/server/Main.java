@@ -5,9 +5,7 @@ import com.jwmu.configuration.Configuration;
 public class Main {
     public static void main(String[] args) {
 
-        String activeProfile = " ";
-        if(args.length > 1)
-            activeProfile = args[1];
+        String activeProfile = "develop";
 
         Configuration configuration = new Configuration(activeProfile);
         ServerLogger logger = new ServerLogger();
