@@ -37,6 +37,10 @@ public class ServerLogger {
         System.err.println(getDate() + count + " Trying to resolve connection to database, retry in 3 seconds");
     }
 
+    public void databaseDisconnectedErr() {
+        System.err.println(getDate() + "Cant resolve connection to database, every connection will be terminated, current will be saved locally");
+    }
+
     //OTHERS
 
     private String getDate(){

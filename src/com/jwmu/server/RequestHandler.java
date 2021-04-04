@@ -57,4 +57,14 @@ public class RequestHandler {
     public void wrongCommand() throws IOException {
         responseSender.sendCode(CodesInterface.WRONG_COMMAND);
     }
+
+    public void databaseNotification() throws IOException {
+        String codeToSend;
+        if(databaseHandler.checkConnection())
+            codeToSend = CodesInterface.DATABASE_CONNECTED;
+        else
+            codeToSend = CodesInterface.DATABASE_DISCONNECTED;
+
+        responseSender.sendCode(codeToSend);
+    }
 }

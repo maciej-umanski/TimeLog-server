@@ -5,7 +5,11 @@ import com.jwmu.configuration.Configuration;
 public class ServerMain {
     public static void main(String[] args) {
 
-        Configuration configuration = new Configuration("local");
+        String activeProfile = " ";
+        if(args.length > 1)
+            activeProfile = args[1];
+
+        Configuration configuration = new Configuration(activeProfile);
         ServerLogger logger = new ServerLogger();
 
         new ConnectionHandler(configuration.getDatabaseUrl(),

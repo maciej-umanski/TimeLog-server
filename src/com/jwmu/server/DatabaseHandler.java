@@ -7,11 +7,13 @@ public class DatabaseHandler extends Thread{
     private final String databaseUser;
     private final String databasePassword;
     private final ServerLogger logger;
+    private final ConnectionHandler connectionHandler;
 
     private Connection connection;
     private boolean isConnected;
 
-    public DatabaseHandler(String databaseUrl, String databaseUser, String databasePassword, ServerLogger logger){
+    public DatabaseHandler(ConnectionHandler connectionHandler, String databaseUrl, String databaseUser, String databasePassword, ServerLogger logger){
+        this.connectionHandler = connectionHandler;
         this.logger = logger;
         this.databaseUrl = databaseUrl;
         this.databaseUser = databaseUser;
@@ -29,6 +31,7 @@ public class DatabaseHandler extends Thread{
                 this.connection = DriverManager.getConnection(databaseUrl, databaseUser, databasePassword);
                 this.connection.setAutoCommit(false);
                 logger.databaseConnected();
+                connectionHandler.setDatabaseConnectionState(true);
                 return true;
             } catch (ClassNotFoundException | SQLException ignored) {
                 logger.databaseConnectionRetry(count);
@@ -38,6 +41,7 @@ public class DatabaseHandler extends Thread{
                     e.printStackTrace();
                 }
                 if(count++ == maxTries){
+                    connectionHandler.setDatabaseConnectionState(false);
                     logger.databaseDisconnected();
                     return false;
                 }
@@ -74,11 +78,12 @@ public class DatabaseHandler extends Thread{
         try {
             this.connection.createStatement().executeQuery("SELECT 1");
         } catch (SQLException ignored) {
-            logger.databaseReconnection();
             if(!(isConnected = connect())){
+                connectionHandler.setDatabaseConnectionState(false);
                 return false;
             }
         }
+        connectionHandler.setDatabaseConnectionState(true);
         return true;
     }
 

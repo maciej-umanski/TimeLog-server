@@ -1,4 +1,5 @@
 package com.jwmu.server;
+
 import java.io.*;
 import java.net.Socket;
 
@@ -8,8 +9,7 @@ public class ClientHandler extends Thread {
     private boolean isLoggedIn = false;
 
     private final InputStream inputStream;
-    private final OutputStream outputStream;
-    private ResponseSender responseSender;
+    private final ResponseSender responseSender;
     private final DatabaseHandler databaseHandler;
 
     private final ServerLogger logger;
@@ -17,15 +17,15 @@ public class ClientHandler extends Thread {
     public ClientHandler(Socket newClientConnection, DatabaseHandler databaseHandler, ServerLogger logger) throws IOException {
         this.logger = logger;
         this.inputStream = new DataInputStream(newClientConnection.getInputStream());
-        this.outputStream = new DataOutputStream(newClientConnection.getOutputStream());
+        OutputStream outputStream = new DataOutputStream(newClientConnection.getOutputStream());
         this.databaseHandler = databaseHandler;
+        this.responseSender = new ResponseSender(outputStream);
         this.start();
     }
 
     @Override
     public void run() {
         try {
-            responseSender = new ResponseSender(outputStream);
             RequestHandler requestHandler = new RequestHandler(this);
             new RequestListener(requestHandler, inputStream);
         } catch (IOException e) {

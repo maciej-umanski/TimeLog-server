@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class ConnectionHandler extends Thread{
 
@@ -17,6 +18,7 @@ public class ConnectionHandler extends Thread{
     protected DatabaseHandler databaseHandler;
     private boolean isServerActive = false;
     private boolean isDatabaseConnected = false;
+    boolean errPromptShown = false;
 
     public ConnectionHandler(String databaseUrl, String databaseUser, String databasePassword, int serverPort, ServerLogger logger) {
         this.logger = logger;
@@ -32,8 +34,12 @@ public class ConnectionHandler extends Thread{
         try {
             initializeServer();
             initializeDatabase();
-            while(isServerActive && isDatabaseConnected){
+            while(isServerActive){
                 handleNewConnections();
+                if(!isDatabaseConnected && !errPromptShown) {
+                    logger.databaseDisconnectedErr();
+                    errPromptShown = true;
+                }
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -46,13 +52,24 @@ public class ConnectionHandler extends Thread{
     }
 
     private void initializeDatabase(){
-        databaseHandler = new DatabaseHandler(databaseUrl, databaseUser, databasePassword, logger);
+        databaseHandler = new DatabaseHandler(this, databaseUrl, databaseUser, databasePassword, logger);
         isDatabaseConnected = databaseHandler.isConnected();
     }
 
     private void handleNewConnections() throws IOException {
-        new ClientHandler(serverSocket.accept(), databaseHandler, logger);
+        Socket newClient = serverSocket.accept();
+        isDatabaseConnected = databaseHandler.checkConnection();
+        if(newClient != null)
+            if (isDatabaseConnected) {
+                new ClientHandler(newClient, databaseHandler, logger);
+                errPromptShown = false;
+            }
+            else
+                newClient.close();
     }
 
+    public void setDatabaseConnectionState(boolean isDatabaseConnected){
+        this.isDatabaseConnected = isDatabaseConnected;
+    }
 
 }

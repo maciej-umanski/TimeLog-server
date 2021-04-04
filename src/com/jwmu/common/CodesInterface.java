@@ -12,5 +12,6 @@ public interface CodesInterface {
     String CLIENT_CONNECTED = "0";
     String SUCCESSFUL_LOGIN = "1";
     String SUCCESSFUL_LOGOFF = "2";
+    String DATABASE_CONNECTED = "3";
 
 }
