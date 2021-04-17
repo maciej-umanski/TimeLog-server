@@ -5,16 +5,22 @@ import com.jwmu.configuration.Configuration;
 public class Main {
     public static void main(String[] args) {
 
-        String activeProfile = "develop";
+        ServerLogger logger = new ServerLogger();
+
+        String activeProfile = "local";
+
+        if(args.length >= 1){
+            activeProfile = args[0];
+        }
+
+        logger.activeProfile(activeProfile);
 
         Configuration configuration = new Configuration(activeProfile);
-        ServerLogger logger = new ServerLogger();
 
         new ConnectionHandler(configuration.getDatabaseUrl(),
                 configuration.getDatabaseUser(),
                 configuration.getDatabasePassword(),
                 configuration.getServerPort(),
                 logger);
-
     }
 }

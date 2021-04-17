@@ -14,7 +14,7 @@ services:
     depends_on:
       - postgres
     build: .
-    image: "timelog-server:develop-0.0.1"
+    image: "timelog-server:develop-0.0.2"
     container_name: "TimeLog-server"
     ports:
       - "8818:8818"

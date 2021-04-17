@@ -1,5 +1,7 @@
 package com.jwmu.server;
 
+import com.jwmu.common.Role;
+
 import java.io.*;
 import java.net.Socket;
 
@@ -7,6 +9,7 @@ public class ClientHandler extends Thread {
 
     private int userId;
     private boolean isLoggedIn = false;
+    private Role role;
 
     private final InputStream inputStream;
     private final ResponseSender responseSender;
@@ -37,8 +40,9 @@ public class ClientHandler extends Thread {
         return isLoggedIn;
     }
 
-    protected void logIn(int userId){
+    protected void logIn(int userId, Role role){
         this.userId = userId;
+        this.role = role;
         this.isLoggedIn = true;
     }
 
@@ -60,5 +64,9 @@ public class ClientHandler extends Thread {
 
     public ServerLogger getLogger(){
         return logger;
+    }
+
+    public Role getRole() {
+        return role;
     }
 }

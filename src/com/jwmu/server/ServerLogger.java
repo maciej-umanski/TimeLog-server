@@ -8,6 +8,10 @@ public class ServerLogger {
     private final SimpleDateFormat simpleDateFormat = new SimpleDateFormat("[yy-MM-dd HH:mm:ss] ");
 
     //INFORMATION
+    public void activeProfile(String profile){
+        System.out.println(getDate() + "Server started with \"" + profile + "\" profile activated");
+    }
+
     public void databaseConnect(){
         System.out.println(getDate() + "Trying to resolve connection to database");
     }
@@ -21,7 +25,11 @@ public class ServerLogger {
     }
 
     public void userLoggedOff(int userId){
-        System.out.println(getDate()+ "User " + userId + " logged off");
+        System.out.println(getDate() + "User " + userId + " logged off");
+    }
+
+    public void userRegistered(int userId, String username){
+        System.out.println(getDate() + "User " + userId + " registered as " + username);
     }
 
     //ERROR

@@ -34,6 +34,7 @@ public class RequestListener extends Thread{
         String[] tokens = request.toLowerCase().split(" ");
 
         switch (tokens[0]) {
+            case "register" -> requestHandler.registerUser(tokens);
             case "login" -> requestHandler.LoginUser(tokens);
             case "logoff" -> requestHandler.logoffUser();
             case "connection" -> requestHandler.connectionNotification();

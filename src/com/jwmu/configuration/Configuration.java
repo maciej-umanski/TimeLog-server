@@ -9,6 +9,8 @@ public class Configuration {
     public Configuration(String activeProfile){
         if(activeProfile.equalsIgnoreCase("develop")){
             databaseUrl = "jdbc:postgresql://postgres:5432/timelog";
+        }else if(activeProfile.equalsIgnoreCase("local")){
+            databaseUrl = "jdbc:postgresql://localhost:5432/timelog";
         }else{
             databaseUrl = "jdbc:postgresql://localhost:5432/timelog";
         }
