@@ -40,6 +40,7 @@ public class RequestListener extends Thread{
             case "connection" -> requestHandler.connectionNotification();
             case "database" -> requestHandler.databaseNotification();
             case "task" -> requestHandler.sendTask();
+            case "whoami" -> requestHandler.whoami();
             default -> requestHandler.wrongCommand();
         }
     }
