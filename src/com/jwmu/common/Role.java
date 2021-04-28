@@ -14,4 +14,22 @@ public enum Role {
     public int getValue() {
         return value;
     }
+
+    public String getName(){
+
+        switch (value) {
+            case 0 -> {
+                return "Owner";
+            }
+            case 1 -> {
+                return "Team_leader";
+            }
+            case 2 -> {
+                return "User";
+            }
+            default -> {
+                return "UNKNOWN";
+            }
+        }
+    }
 }
