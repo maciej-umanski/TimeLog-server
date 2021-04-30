@@ -108,4 +108,12 @@ public class RequestHandler {
             e.printStackTrace();
         }
     }
+
+    public void whoami() throws IOException {
+        if (!clientHandler.isLoggedIn()) {
+            responseSender.send(Codes.CLIENT_NOT_LOGGED);
+        }else{
+            responseSender.send(this.clientHandler.getRole());
+        }
+    }
 }
