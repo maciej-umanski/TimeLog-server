@@ -32,6 +32,14 @@ public class ServerLogger {
         System.out.println(getDate() + "User " + userId + " registered as " + username);
     }
 
+    public void clientConnected(){
+        System.out.println(getDate() + "Client connected");
+    }
+
+    public void clientDisconnected(){
+        System.out.println(getDate() + "Client disconnected");
+    }
+
     //ERROR
     public void databaseDisconnected(){
         System.err.println(getDate() + "Failed to connect to database");

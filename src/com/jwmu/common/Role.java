@@ -1,5 +1,8 @@
 package com.jwmu.common;
 
+import java.util.Arrays;
+import java.util.Optional;
+
 public enum Role {
     OWNER(0),
     TEAM_LEADER(1),
@@ -13,6 +16,12 @@ public enum Role {
 
     public int getValue() {
         return value;
+    }
+
+    public static Optional<Role> valueOf(int value){
+        return Arrays.stream(values())
+                .filter(role -> role.value == value)
+                .findFirst();
     }
 
     public String getName(){

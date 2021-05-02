@@ -3,6 +3,7 @@ package com.jwmu.server;
 import com.jwmu.common.Codes;
 import com.jwmu.common.Role;
 import com.jwmu.common.Task;
+import com.jwmu.common.User;
 
 import java.io.IOException;
 import java.sql.SQLException;
@@ -30,9 +31,10 @@ public class RequestHandler {
                 if (tokens.length == 3) {
                     boolean isAuthenticated = databaseHandler.authenticateUser(tokens[1], tokens[2]);
                     if (isAuthenticated) {
-                        clientHandler.logIn(databaseHandler.getUserId(tokens[1]), databaseHandler.getRole(tokens[1]));
-                        responseSender.send(Codes.SUCCESSFUL_LOGIN);
-                        logger.userLoggedIn(clientHandler.getUserId());
+                        int id = databaseHandler.getUserId(tokens[1]);
+                        clientHandler.logIn(databaseHandler.getUserData(id));
+                        responseSender.send(clientHandler.getUser());
+                        logger.userLoggedIn(clientHandler.getUser().getId());
                     } else {
                         responseSender.send(Codes.WRONG_CREDENTIALS);
                     }
@@ -51,9 +53,9 @@ public class RequestHandler {
         if(!clientHandler.isLoggedIn()){
             responseSender.send(Codes.CLIENT_NOT_LOGGED);
         }else{
+            logger.userLoggedOff(clientHandler.getUser().getId());
             clientHandler.logOff();
             responseSender.send(Codes.SUCCESSFUL_LOGOFF);
-            logger.userLoggedOff(clientHandler.getUserId());
         }
     }
 
@@ -86,7 +88,7 @@ public class RequestHandler {
                 responseSender.send(Codes.CLIENT_NOT_LOGGED);
                 return;
             }
-            if(clientHandler.getRole() != Role.OWNER){
+            if(clientHandler.getUser().getRole() != Role.OWNER){
                 responseSender.send(Codes.NO_PERMISSION);
                 return;
             }
@@ -113,7 +115,44 @@ public class RequestHandler {
         if (!clientHandler.isLoggedIn()) {
             responseSender.send(Codes.CLIENT_NOT_LOGGED);
         }else{
-            responseSender.send(this.clientHandler.getRole());
+            responseSender.send(this.clientHandler.getUser());
+        }
+    }
+
+    public void modifyUser(User userNew) throws IOException {
+        try {
+            if (!databaseHandler.checkConnection()) {
+                responseSender.send(Codes.DATABASE_DISCONNECTED);
+                return;
+            }
+            if (!clientHandler.isLoggedIn()) {
+                responseSender.send(Codes.CLIENT_NOT_LOGGED);
+                return;
+            }
+
+            if(!clientHandler.getUser().getId().equals(userNew.getId())){
+                responseSender.send(Codes.WRONG_ID);
+                return;
+            }
+
+            User userOld = databaseHandler.getUserData(userNew.getId());
+
+            if (userNew.getName() != null || !userOld.getName().equals(userNew.getName()))
+                userOld.setName(userNew.getName());
+
+            if (userNew.getSurname() != null || !userOld.getSurname().equals(userNew.getSurname()))
+                userOld.setSurname(userNew.getSurname());
+
+            if (userNew.getMail() != null || !userOld.getMail().equals(userNew.getMail()))
+                userOld.setMail(userNew.getMail());
+
+            User updatedUser = databaseHandler.updateUserData(userNew);
+
+            responseSender.send(updatedUser);
+
+        } catch (IOException | SQLException e) {
+            responseSender.send(Codes.INTERNAL_ERROR);
+            e.printStackTrace();
         }
     }
 }

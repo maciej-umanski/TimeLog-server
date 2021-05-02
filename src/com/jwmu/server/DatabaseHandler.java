@@ -1,7 +1,10 @@
 package com.jwmu.server;
 
 import com.jwmu.common.Role;
+import com.jwmu.common.User;
+
 import java.sql.*;
+import java.util.Optional;
 
 public class DatabaseHandler extends Thread{
     private final String databaseUrl;
@@ -63,18 +66,6 @@ public class DatabaseHandler extends Thread{
         return authenticate;
     }
 
-    public Role getRole(String username) throws SQLException{
-        Statement statement = this.connection.createStatement();
-        String str = "SELECT ROLE FROM USERS WHERE USERNAME = '" + username + "';";
-        ResultSet resultSet = statement.executeQuery(str);
-        resultSet.next();
-        int result = Integer.parseInt(resultSet.getString("role"));
-        statement.close();
-        resultSet.close();
-
-        return Role.values()[result];
-    }
-
     public int getUserId(String username) throws SQLException {
         Statement statement = this.connection.createStatement();
         String str = "SELECT id FROM USERS WHERE USERNAME = '" + username + "';";
@@ -85,6 +76,31 @@ public class DatabaseHandler extends Thread{
         resultSet.close();
 
         return Integer.parseInt(id);
+    }
+
+    public User getUserData(int id) throws SQLException {
+        Statement statement = this.connection.createStatement();
+        String str = "SELECT id, name, surname, mail, role FROM USERS WHERE id = '" + id + "';";
+        ResultSet resultSet = statement.executeQuery(str);
+        resultSet.next();
+        User user = new User();
+        user.setId(Integer.valueOf(resultSet.getString("id")));
+        user.setName(resultSet.getString("name"));
+        user.setSurname(resultSet.getString("surname"));
+        user.setMail(resultSet.getString("mail"));
+        Optional<Role> roleOptional = Role.valueOf(Integer.parseInt(resultSet.getString("role")));
+        roleOptional.ifPresent(user::setRole);
+
+        return user;
+    }
+
+    public User updateUserData(User user) throws SQLException {
+        Statement statement = this.connection.createStatement();
+        String str = "UPDATE USERS SET NAME = '" + user.getName() + "', SURNAME = '" +
+                 user.getSurname() + "', MAIL = '" + user.getMail() + "' WHERE ID = " + user.getId();
+        statement.executeUpdate(str);
+
+        return getUserData(user.getId());
     }
 
     public boolean isUserExist(String username) throws SQLException {
@@ -103,7 +119,7 @@ public class DatabaseHandler extends Thread{
 
     public int registerUser(String username, String password) throws SQLException {
         Statement statement = this.connection.createStatement();
-        String str = "INSERT INTO USERS VALUES (nextval('user_seq'), '" + username + "', '" + password + "', " + Role.USER.ordinal() + ")";
+        String str = "INSERT INTO USERS(id, username, password, role) VALUES (nextval('user_seq'), '" + username + "', '" + password + "', " + Role.USER.ordinal() + ")";
         statement.executeUpdate(str);
 
         return getUserId(username);

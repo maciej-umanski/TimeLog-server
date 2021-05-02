@@ -1,15 +1,15 @@
 package com.jwmu.server;
 
 import com.jwmu.common.Role;
+import com.jwmu.common.User;
 
 import java.io.*;
 import java.net.Socket;
 
 public class ClientHandler extends Thread {
 
-    private int userId;
+    private User user;
     private boolean isLoggedIn = false;
-    private Role role;
 
     private final InputStream inputStream;
     private final ResponseSender responseSender;
@@ -30,7 +30,7 @@ public class ClientHandler extends Thread {
     public void run() {
         try {
             RequestHandler requestHandler = new RequestHandler(this);
-            new RequestListener(requestHandler, inputStream);
+            new RequestListener(requestHandler, inputStream, logger);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -40,14 +40,14 @@ public class ClientHandler extends Thread {
         return isLoggedIn;
     }
 
-    protected void logIn(int userId, Role role){
-        this.userId = userId;
-        this.role = role;
-        this.isLoggedIn = true;
+    protected void logIn(User user){
+        this.user = user;
+        isLoggedIn = true;
     }
 
     protected void logOff(){
-        this.isLoggedIn = false;
+        user = null;
+        isLoggedIn = false;
     }
 
     public ResponseSender getResponseSender() {
@@ -58,15 +58,11 @@ public class ClientHandler extends Thread {
         return databaseHandler;
     }
 
-    public int getUserId() {
-        return userId;
-    }
-
     public ServerLogger getLogger(){
         return logger;
     }
 
-    public Role getRole() {
-        return role;
+    public User getUser() {
+        return user;
     }
 }

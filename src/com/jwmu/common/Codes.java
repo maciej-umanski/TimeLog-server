@@ -11,7 +11,8 @@ public interface Codes {
     String WRONG_COMMAND = "-4";
     String DATABASE_DISCONNECTED = "-5";
     String LOGIN_EXIST = "-6";
-    Object NO_PERMISSION = "-7";
+    String NO_PERMISSION = "-7";
+    String WRONG_ID = "-8";
 
     //good codes
     String CLIENT_CONNECTED = "0";
@@ -19,6 +20,5 @@ public interface Codes {
     String SUCCESSFUL_LOGOFF = "2";
     String DATABASE_CONNECTED = "3";
     String SUCCESSFUL_REGISTER = "4";
-
 
 }

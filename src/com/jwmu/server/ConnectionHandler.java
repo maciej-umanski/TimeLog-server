@@ -34,7 +34,7 @@ public class ConnectionHandler extends Thread{
         try {
             initializeServer();
             initializeDatabase();
-            while(isServerActive){
+            while(isServerActive && isDatabaseConnected){
                 handleNewConnections();
                 if(!isDatabaseConnected && !errPromptShown) {
                     logger.databaseDisconnectedErr();
