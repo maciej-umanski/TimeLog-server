@@ -7,6 +7,7 @@ import com.jwmu.common.User;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.List;
 
 public class RequestHandler {
     private final ClientHandler clientHandler;
@@ -71,11 +72,6 @@ public class RequestHandler {
             codeToSend = Codes.DATABASE_DISCONNECTED;
 
         responseSender.send(codeToSend);
-    }
-
-    public void sendTask() throws IOException {
-        Task taskToSend = new Task(0,"test");
-        responseSender.send(taskToSend);
     }
 
     public void registerUser(String[] tokens) throws IOException {
@@ -154,5 +150,47 @@ public class RequestHandler {
             responseSender.send(Codes.INTERNAL_ERROR);
             e.printStackTrace();
         }
+    }
+
+    public void sendTask(String[] tokens) throws IOException {
+        try{
+            if (!databaseHandler.checkConnection()) {
+                responseSender.send(Codes.DATABASE_DISCONNECTED);
+                return;
+            }
+            if (!clientHandler.isLoggedIn()) {
+                responseSender.send(Codes.CLIENT_NOT_LOGGED);
+                return;
+            }
+
+            List<Task> taskList = databaseHandler.getTaskList(tokens[1]);
+            if(taskList.isEmpty()){
+                responseSender.send(Codes.NO_TASKS_FOUND);
+                return;
+            }
+            responseSender.send(taskList);
+        } catch (SQLException throwables) {
+            responseSender.send(Codes.INTERNAL_ERROR);
+            throwables.printStackTrace();
+        }
+    }
+
+    public void newTask(Task task) throws IOException {
+        try{
+            if (!databaseHandler.checkConnection()) {
+                responseSender.send(Codes.DATABASE_DISCONNECTED);
+                return;
+            }
+            if (!clientHandler.isLoggedIn()) {
+                responseSender.send(Codes.CLIENT_NOT_LOGGED);
+                return;
+            }
+            Task createdTask = databaseHandler.sendTask(task);
+            responseSender.send(createdTask);
+        } catch (IOException | SQLException e) {
+            responseSender.send(Codes.INTERNAL_ERROR);
+            e.printStackTrace();
+        }
+
     }
 }

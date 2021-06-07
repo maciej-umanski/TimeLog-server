@@ -13,6 +13,7 @@ public interface Codes {
     String LOGIN_EXIST = "-6";
     String NO_PERMISSION = "-7";
     String WRONG_ID = "-8";
+    String NO_TASKS_FOUND = "-9";
 
     //good codes
     String CLIENT_CONNECTED = "0";

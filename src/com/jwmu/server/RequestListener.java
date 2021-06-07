@@ -1,5 +1,6 @@
 package com.jwmu.server;
 
+import com.jwmu.common.Task;
 import com.jwmu.common.User;
 
 import java.io.*;
@@ -36,6 +37,8 @@ public class RequestListener extends Thread{
                     handleStringRequest((String) request);
                 if (request.getClass() == User.class)
                     handleUserRequest((User) request);
+                if (request.getClass() == Task.class)
+                    handleTaskRequest((Task) request);
             }
         } catch (IOException | ClassNotFoundException | SQLException e) {
             logger.clientDisconnected();
@@ -51,7 +54,7 @@ public class RequestListener extends Thread{
             case "logoff" -> requestHandler.logoffUser();
             case "connection" -> requestHandler.connectionNotification();
             case "database" -> requestHandler.databaseNotification();
-            case "task" -> requestHandler.sendTask();
+            case "get_task" -> requestHandler.sendTask(tokens);
             case "whoami" -> requestHandler.whoami();
             default -> requestHandler.wrongCommand();
         }
@@ -59,5 +62,9 @@ public class RequestListener extends Thread{
 
     private void handleUserRequest(User user) throws IOException {
         requestHandler.modifyUser(user);
+    }
+
+    private void handleTaskRequest(Task task) throws IOException {
+        requestHandler.newTask(task);
     }
 }

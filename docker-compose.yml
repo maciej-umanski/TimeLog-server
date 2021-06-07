@@ -2,7 +2,7 @@ version: "3.3"
 services:
   postgres:
     container_name: postgres
-    image: postgres:latest
+    image: postgres:0.0.10
     build:
       context: ./database
       dockerfile: Dockerfile
@@ -14,7 +14,7 @@ services:
     depends_on:
       - postgres
     build: .
-    image: "timelog-server:develop-0.0.4"
-    container_name: "TimeLog-server"
+    image: timelog-server:develop-0.0.10
+    container_name: "TimeLog-server_0.0.10"
     ports:
       - "8818:8818"

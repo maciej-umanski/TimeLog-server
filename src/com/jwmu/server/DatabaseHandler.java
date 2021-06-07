@@ -1,9 +1,14 @@
 package com.jwmu.server;
 
 import com.jwmu.common.Role;
+import com.jwmu.common.Task;
 import com.jwmu.common.User;
 
 import java.sql.*;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 public class DatabaseHandler extends Thread{
@@ -94,6 +99,57 @@ public class DatabaseHandler extends Thread{
         return user;
     }
 
+    public List<Task> getTaskList(String userId) throws SQLException {
+        Statement statement = this.connection.createStatement();
+        String str = "SELECT * FROM TASKS WHERE creator = " + userId + ";";
+        ResultSet resultSet = statement.executeQuery(str);
+        List<Task> taskList = new ArrayList<>();
+        while(resultSet.next()){
+            Task task = new Task();
+            task.setId(Integer.parseInt(resultSet.getString("id")));
+            task.setTitle(resultSet.getString("title"));
+            task.setDescription(resultSet.getString("description"));
+            task.setCreationDate(resultSet.getTimestamp("creation_date"));
+            task.setDueToDate(resultSet.getTimestamp("due_to_date"));
+            task.setCreator(Integer.parseInt(resultSet.getString("creator")));
+            taskList.add(task);
+        }
+        statement.close();
+        resultSet.close();
+        return taskList;
+    }
+
+    public Task getTask(String taskId) throws SQLException {
+        Statement statement = this.connection.createStatement();
+        String str = "SELECT * FROM TASKS WHERE id = '" + taskId + "';";
+        ResultSet resultSet = statement.executeQuery(str);
+        resultSet.next();
+        Task task = new Task();
+        task.setId(Integer.parseInt(resultSet.getString("id")));
+        task.setTitle(resultSet.getString("title"));
+        task.setDescription(resultSet.getString("description"));
+        task.setCreationDate(resultSet.getTimestamp("creation_date"));
+        task.setDueToDate(resultSet.getTimestamp("due_to_date"));
+        task.setCreator(Integer.parseInt(resultSet.getString("creator")));
+        statement.close();
+        resultSet.close();
+        return task;
+    }
+
+    public Task sendTask(Task task) throws SQLException {
+        Statement statement = this.connection.createStatement();
+        String str = "INSERT INTO TASKS(id, title, description, creation_date, due_to_date, creator) " +
+                "VALUES (nextval('task_seq'), '" + task.getTitle() + "', '" + task.getDescription() + "', '"
+                + task.getCreationDate() + "', '" + task.getDueToDate() + "', '" + task.getCreator() + "')";
+        statement.executeUpdate(str);
+        System.out.println(str);
+        str = "SELECT MAX(ID) FROM TASKS WHERE creator = '" + task.getCreator() + "';";
+        ResultSet resultSet = statement.executeQuery(str);
+        resultSet.next();
+        String id = resultSet.getString("max");
+        return getTask(id);
+    }
+
     public User updateUserData(User user) throws SQLException {
         Statement statement = this.connection.createStatement();
         String str = "UPDATE USERS SET NAME = '" + user.getName() + "', SURNAME = '" +
@@ -141,4 +197,5 @@ public class DatabaseHandler extends Thread{
     public boolean isConnected() {
         return isConnected;
     }
+
 }
