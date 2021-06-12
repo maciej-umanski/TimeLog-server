@@ -5,6 +5,7 @@ import com.jwmu.common.User;
 
 import java.io.*;
 import java.sql.SQLException;
+import java.util.List;
 
 public class RequestListener extends Thread{
 
@@ -33,12 +34,12 @@ public class RequestListener extends Thread{
         try{
             logger.clientConnected();
             while ((request = objectInputStream.readObject()) != null) {
-                if (request.getClass() == String.class)
+                if (request instanceof String)
                     handleStringRequest((String) request);
-                if (request.getClass() == User.class)
+                if (request instanceof User)
                     handleUserRequest((User) request);
-                if (request.getClass() == Task.class)
-                    handleTaskRequest((Task) request);
+                if (request instanceof List)
+                    handleTaskRequest((List<Task>) request);
             }
         } catch (IOException | ClassNotFoundException | SQLException e) {
             logger.clientDisconnected();
@@ -64,7 +65,7 @@ public class RequestListener extends Thread{
         requestHandler.modifyUser(user);
     }
 
-    private void handleTaskRequest(Task task) throws IOException {
-        requestHandler.newTask(task);
+    private void handleTaskRequest(List<Task> tasks) throws IOException {
+        requestHandler.newTask(tasks);
     }
 }

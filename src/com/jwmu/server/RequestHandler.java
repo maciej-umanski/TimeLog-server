@@ -7,6 +7,7 @@ import com.jwmu.common.User;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 public class RequestHandler {
@@ -175,7 +176,7 @@ public class RequestHandler {
         }
     }
 
-    public void newTask(Task task) throws IOException {
+    public void newTask(List<Task> tasks) throws IOException {
         try{
             if (!databaseHandler.checkConnection()) {
                 responseSender.send(Codes.DATABASE_DISCONNECTED);
@@ -185,8 +186,11 @@ public class RequestHandler {
                 responseSender.send(Codes.CLIENT_NOT_LOGGED);
                 return;
             }
-            Task createdTask = databaseHandler.sendTask(task);
-            responseSender.send(createdTask);
+            List<Task> createdTasks = new ArrayList<>();
+            for(Task task : tasks){
+                createdTasks.add(databaseHandler.sendTask(task));
+            }
+            responseSender.send(createdTasks);
         } catch (IOException | SQLException e) {
             responseSender.send(Codes.INTERNAL_ERROR);
             e.printStackTrace();
