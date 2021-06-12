@@ -119,35 +119,18 @@ public class DatabaseHandler extends Thread{
         return taskList;
     }
 
-    public Task getTask(String taskId) throws SQLException {
-        Statement statement = this.connection.createStatement();
-        String str = "SELECT * FROM TASKS WHERE id = '" + taskId + "';";
-        ResultSet resultSet = statement.executeQuery(str);
-        resultSet.next();
-        Task task = new Task();
-        task.setId(Integer.parseInt(resultSet.getString("id")));
-        task.setTitle(resultSet.getString("title"));
-        task.setDescription(resultSet.getString("description"));
-        task.setCreationDate(resultSet.getTimestamp("creation_date"));
-        task.setDueToDate(resultSet.getTimestamp("due_to_date"));
-        task.setCreator(Integer.parseInt(resultSet.getString("creator")));
-        statement.close();
-        resultSet.close();
-        return task;
-    }
-
     public Task sendTask(Task task) throws SQLException {
         Statement statement = this.connection.createStatement();
         String str = "INSERT INTO TASKS(id, title, description, creation_date, due_to_date, creator) " +
                 "VALUES (nextval('task_seq'), '" + task.getTitle() + "', '" + task.getDescription() + "', '"
                 + task.getCreationDate() + "', '" + task.getDueToDate() + "', '" + task.getCreator() + "')";
         statement.executeUpdate(str);
-        System.out.println(str);
         str = "SELECT MAX(ID) FROM TASKS WHERE creator = '" + task.getCreator() + "';";
         ResultSet resultSet = statement.executeQuery(str);
         resultSet.next();
         String id = resultSet.getString("max");
-        return getTask(id);
+        task.setId(Integer.parseInt(id));
+        return task;
     }
 
     public User updateUserData(User user) throws SQLException {
