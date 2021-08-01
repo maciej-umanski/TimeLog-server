@@ -1,81 +1,62 @@
 package com.jwmu.common;
 
 import java.io.Serializable;
-import java.util.Date;
+import java.sql.Timestamp;
 
 public class Task implements Serializable {
-    private final String userID;
-    private Date startDate;
-    private Date endDate;
+
+    private int id;
     private String title;
-    private String note;
-    private boolean isStarted;
-    private boolean isFinished;
+    private String description;
+    private Timestamp creationDate;
+    private Timestamp dueToDate;
+    private int creator;
 
-    public Task(String userID, String title, String note){
-        this.userID = userID;
-        this.title = title;
-        this.note = note;
-        this.startDate = new Date();
-        this.endDate = new Date();
+    public int getId() {
+        return id;
     }
 
-    public String getUserID() {
-        return userID;
+    public void setId(int id) {
+        this.id = id;
     }
-    public String getTitle(){
+
+    public String getTitle() {
         return title;
     }
-    public Date getStartDate() {
-        return startDate;
-    }
-    public Date getEndDate() {
-        return endDate;
-    }
-    public String getNote() {
-        return note;
-    }
-    public boolean isStarted(){
-        return isStarted;
-    }
-    public boolean isFinished() {
-        return isFinished;
+
+    public void setTitle(String title) {
+        this.title = title;
     }
 
-    public void setTitle(String newTitle){
-        this.title = newTitle;
-    }
-    public void setNote(String newNote){
-        this.note = newNote;
+    public String getDescription() {
+        return description;
     }
 
-    public boolean setStartDate(Date newStartDate){
-        if(endDate != null && newStartDate.after(endDate))
-            return false;
-        else{
-            this.startDate = newStartDate;
-            this.updateStartState();
-            return true;
-        }
-    }
-    public boolean setEndDate(Date newEndDate){
-        if(startDate != null && newEndDate.before(this.startDate)){
-            return false;
-        }else{
-            this.endDate = newEndDate;
-            this.updateFinishState();
-            return true;
-        }
+    public void setDescription(String description) {
+        this.description = description;
     }
 
-    private void updateStartState(){
-        this.isStarted = this.startDate.before(new Date());
-    }
-    private void updateFinishState() {
-        this.isFinished = this.endDate.before(new Date());
+    public Timestamp getCreationDate() {
+        return creationDate;
     }
 
-    public String getFormattedTaskAsString(){
-        return title + " " + note + " " + startDate + " " + endDate + " " + isStarted + " " + isFinished;
+    public void setCreationDate(Timestamp creationDate) {
+        this.creationDate = creationDate;
+    }
+
+    public Timestamp getDueToDate() {
+        return dueToDate;
+    }
+
+    public void setDueToDate(Timestamp dueToDate) {
+        this.dueToDate = dueToDate;
+    }
+
+    public int getCreator() {
+        return creator;
+    }
+
+    public void setCreator(int creator) {
+        this.creator = creator;
     }
 }
